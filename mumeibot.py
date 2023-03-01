@@ -7,6 +7,10 @@ from discord import message
 from discord import channel
 from discord import mentions
 from discord.ext import commands
+from config import API_KEY, token
+import aiohttp
+
+load_dotenv
 
 client = discord.Client()
 embed = discord.Embed()
@@ -100,6 +104,5 @@ async def on_message(message):
             name="NSTP", value="SAT 8:30 - 9:30 \n\n https://usls-edu-ph.zoom.us/j/95328196016?pwd=eEsxb1VBdXcyMmUwTU1rZVZLZ3dUUT09", inline=True
         )
         await message.channel.send(embed=Sched)
-        
 
-client.run('ODgwNzk3Mjc1MjA5NzYwNzk4.YSjgYg.Y0wRNBBFAu4vKX9hSswztOkMOwg')
+client.run('token')
