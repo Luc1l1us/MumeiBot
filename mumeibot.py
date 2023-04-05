@@ -8,7 +8,6 @@ from discord import channel
 from discord import mentions
 from discord.ext import commands
 from config import API_KEY, token
-import aiohttp
 
 load_dotenv
 
