@@ -1,18 +1,19 @@
 from time import ctime
-import discord, os, time
+import discord
+import os
+import time
+from yeetus import chatgpt_response
 from datetime import datetime, tzinfo
 from discord import message
 from discord import channel
 from discord import mentions
+from discord import app_commands
 from discord.ext import commands
 from dotenv import load_dotenv
+
 load_dotenv()
 
-token = os.getenv('token')
-API_KEY = os.getenv()
-
-client = discord.Client()
-embed = discord.Embed()
+TOKEN = os.getenv('TOKEN')
 
 now = datetime.now()
 year = now.strftime("%Y")
@@ -21,7 +22,7 @@ day = now.strftime("%D")
 time = now.strftime("%I:%M:%S")
 date_time = now.strftime("%b/%d/%Y")
 
-
+"""
 @client.event
 async def on_ready():
     await client.change_presence(activity=discord.Game(name="*help"))
@@ -101,5 +102,57 @@ async def on_message(message):
             name="NSTP", value="SAT 8:30 - 9:30 \n\n https://usls-edu-ph.zoom.us/j/95328196016?pwd=eEsxb1VBdXcyMmUwTU1rZVZLZ3dUUT09", inline=True
         )
         await message.channel.send(embed=Sched)
+"""
 
-client.run('token')
+
+class MyClient(discord.Client):
+    async def on_ready(self):
+        await tree.sync()
+        print(f'Logged on as {self.user}!')
+
+    if (str(datetime.now()) >= '2021-08-31 17:50:00.000000'):
+        print(datetime.now())
+
+    async def on_message(self, message):
+        print(message.content)
+        if message.author == self.user:
+            return
+        
+    
+        if message.content.startswith('/ai' or '/bot' or '/chatgpt'):
+            command, user_message = None, None
+
+            for text in ['/ai', '/bot', '/chatgpt']:
+                if message.content.startswith(text):
+                    command = message.content.split(' ')[0]
+                    user_message = message.content.replace(text, '')
+                    print(command, user_message)
+        
+            if command == '/ai' or '/bot' or '/chatgpt':
+                bot_response = chatgpt_response(prompt=user_message)
+                await message.channel.send(f"Question: ```{user_message}``` Answer: ```{bot_response}```")
+
+        
+
+intents = discord.Intents.default()
+intents.message_content = True
+
+client = MyClient(intents=intents)
+tree = app_commands.CommandTree(client)
+
+@tree.command(name = "date", description = "displays the date currently")
+async def first_tree(interaction):
+    await interaction.response.send_message(date_time)
+
+@tree.command(name = "chatgpt", description = "get an answer directly from ChatGPT")
+@app_commands.describe(question = "What question would you like to get answered by ChatGPT?")
+async def chatgpt(interaction: discord.Interaction, question: str):
+    command, user_message = None, None
+    command = ("/ai")
+    user_message = question.replace('/ai', '')
+    print(command, user_message)
+
+    bot_response = chatgpt_response(prompt=user_message)
+    await interaction.response.send_message(f"Question: ```{user_message}``` Answer: ```{bot_response}```")
+
+client.run(TOKEN)
