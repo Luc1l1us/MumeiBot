@@ -1,18 +1,18 @@
 from time import ctime
-import discord, os, time
+import discord
+import os
+import time
 from datetime import datetime, tzinfo
 from discord import message
 from discord import channel
 from discord import mentions
 from discord.ext import commands
 from dotenv import load_dotenv
+from Bot.chatgpt.openai import chatgpt_response
 load_dotenv()
 
-token = os.getenv('token')
-API_KEY = os.getenv()
-
-client = discord.Client()
-embed = discord.Embed()
+TOKEN = os.getenv('TOKEN')
+API_KEY = os.getenv('API_KEY')
 
 now = datetime.now()
 year = now.strftime("%Y")
@@ -21,7 +21,7 @@ day = now.strftime("%D")
 time = now.strftime("%I:%M:%S")
 date_time = now.strftime("%b/%d/%Y")
 
-
+"""
 @client.event
 async def on_ready():
     await client.change_presence(activity=discord.Game(name="*help"))
@@ -101,5 +101,31 @@ async def on_message(message):
             name="NSTP", value="SAT 8:30 - 9:30 \n\n https://usls-edu-ph.zoom.us/j/95328196016?pwd=eEsxb1VBdXcyMmUwTU1rZVZLZ3dUUT09", inline=True
         )
         await message.channel.send(embed=Sched)
+"""
 
-client.run('token')
+class MyClient(discord.Client):
+    async def on_ready(self):
+        print(f'Logged on as {self.user}!')
+
+    async def on_message(self, message):
+        print(message.content)
+        if message.author == self.user:
+            return
+        
+        command, user_message = None, None
+
+        for text in ['/ai', '/bot', '/chatgpt']:
+            if message.content.startswith(text):
+                command = message.content.split(' ')[0]
+                user_message = message.content.replace(text, '')
+                print(command, user_message)
+        
+        if command == '/ai' or '/bot' or '/chatgpt':
+            bot_response = chatgpt_response(prompt=user_message)
+            await message.channel.send(f"Answer: ```{bot_response}```")
+
+intents = discord.Intents.default()
+intents.message_content = True
+
+client = MyClient(intents=intents)
+client.run("ODgwNzk3Mjc1MjA5NzYwNzk4.GPdt9o.qOwmww64yAYBLrlgHCI_PPtOz-NH9j6W4k3C_Y")
