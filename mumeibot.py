@@ -1,15 +1,15 @@
 from time import ctime
-import discord
-import os
-import time
+import discord, os, time
 from datetime import datetime, tzinfo
 from discord import message
 from discord import channel
 from discord import mentions
 from discord.ext import commands
-from config import API_KEY, token
+from dotenv import load_dotenv
+load_dotenv()
 
-load_dotenv
+token = os.getenv('token')
+API_KEY = os.getenv()
 
 client = discord.Client()
 embed = discord.Embed()
@@ -18,9 +18,7 @@ now = datetime.now()
 year = now.strftime("%Y")
 month = now.strftime("%M")
 day = now.strftime("%D")
-
 time = now.strftime("%I:%M:%S")
-
 date_time = now.strftime("%b/%d/%Y")
 
 
