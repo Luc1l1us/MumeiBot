@@ -153,6 +153,16 @@ async def chatgpt(interaction: discord.Interaction, question: str):
     print(command, user_message)
 
     bot_response = chatgpt_response(prompt=user_message)
-    await interaction.response.send_message(f"Question: ```{user_message}``` Answer: ```{bot_response}```")
+    chatgptembed = discord.Embed(title='chatgpt', description='Answer Query')
+    chatgptembed.timestamp
+    chatgptembed.color = 0x826d0e
+    chatgptembed.set_thumbnail(url="https://i.imgur.com/ixlsPal.jpg")
+    chatgptembed.add_field(
+            name="Question", value="{user_message}"
+        )
+    chatgptembed.add_field(
+            name="Answer", value="{bot_response}"
+        )
+    await interaction.response.send_message(chatgptembed)
 
 client.run(TOKEN)
