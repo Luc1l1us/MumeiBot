@@ -112,7 +112,7 @@ async def chatgpt(interaction: discord.Interaction, question: str):
 
     bot_response = chatgpt_response(prompt=user_message)
     chatgptembed = discord.Embed(type='rich')
-    chatgptembed.timestamp = datetime.datetime.utcnow()
+    chatgptembed.timestamp = datetime.utcnow()
     chatgptembed.color = 0x873e23
     chatgptembed.add_field(
         name="Question: ", value=f"```{user_message}```", inline=False
