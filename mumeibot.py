@@ -4,7 +4,7 @@ from yeetus import chatgpt_response
 from datetime import datetime, tzinfo
 from discord import app_commands
 from dotenv import load_dotenv
-
+import random
 load_dotenv()
 
 TOKEN = os.getenv('TOKEN')
@@ -89,6 +89,10 @@ class MyClient(discord.Client):
     
         if message.content.startswith('*whoami' or 'whoami'):
             await message.channel.send('You are {}'.format(message.author.name))
+
+        if message.content.startswith('*rhentai' or 'rhentai'):
+            rand = random.randrange(1,103129)
+            await message.channel.send("https://nhentai.net/g/" + str(rand))
 
 intents = discord.Intents.default()
 intents.message_content = True
