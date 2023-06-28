@@ -88,7 +88,7 @@ class MyClient(discord.Client):
                 courseurl = 'https://usls.instructure.com/api/v1/courses/'
                 courseresponse = requests.get(courseurl, headers=headers)
                 course_data = courseresponse.json()
-                assembed = discord.Embed(title="course_name", description='Assignments')
+                assembed = discord.Embed(title="course_name", description='Assignments', type='rich')
                 assembed.color = 0x826d0e
                 assembed.timestamp
 
@@ -96,11 +96,13 @@ class MyClient(discord.Client):
                     assignment_id = assignment['id']
                     assignment_name = assignment['name']
                     assignment_description = assignment['description']
-                    
-                    """splitdesc = assignment_description.split()
-                    first50 = ' '.join(splitdesc[:50])"""
-                    assembed.add_field(name=assignment_name, value=first50, inline=False)
-                await message.channel.send(embed=assembed)
+                    assignment_due = assignment['due_at']
+                    splitdesc = assignment_description.split()
+                    first50 = ' '.join(splitdesc[:50])
+                    assembed.add_field(name=assignment_name, value=f"```{first50}```", inline=False)
+                    assembed.add_field(name="Due Date", value=f"```{assignment_due}```", inline=False)
+                    assembed.add_field(name='\u200B', value='\u200B', inline=False)
+                    await message.channel.send(embed=assembed)
             else: 
                 await message.channel.send(f"Error: {response.status_code} - {response.text}")
                 
