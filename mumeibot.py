@@ -96,14 +96,20 @@ class MyClient(discord.Client):
                 for assignment in assignments:
                     assignment_id = assignment['id']
                     assignment_name = assignment['name']
-                    assignment_description = assignment['description']
+                    assignment_maxpoint = assignment['points_possible']
+                    assignment_fgi = assignment['omit_from_final_grade']
+                    #assignment_description = assignment['description']
                     assignment_due = assignment['due_at']
                     assignment_url = assignment['html_url']
-                    splitdesc = assignment_description.split()
-                    first25 = ' '.join(splitdesc[:25])
-                    assembed.add_field(name=f"{assignment_name}", value=f"```{first25}```", inline=False)
-                    assembed.add_field(name="Due Date", value=f"```{assignment_due}```", inline=False)
-                    assembed.add_field(name=f"URL", value=f"[Assignment]({assignment_url})", inline=False)
+                    assignment_attempts = assignment['allowed_attempts']
+                    #splitdesc = assignment_description.split()
+                    #first25 = ' '.join(splitdesc[:25])
+                    assembed.title=assignment_name
+                    assembed.add_field(name=f"{assignment_name}", value=f"Points Possible: ```{assignment_maxpoint}```", inline=True)
+                    assembed.add_field(name="Deadline", value=f"Due Date (YYYY-MM-DD): ```{assignment_due}```", inline=True)
+                    assembed.add_field(name=f"Counted in Final Grade:", value=f"```{assignment_fgi}```", inline=False)
+                    assembed.add_field(name=f"URL", value=f"[Link to assignment]({assignment_url})", inline=True)
+                    assembed.add_field(name="Allowed Attempts: ", value=f"```{assignment_attempts}```", inline=True)
                     assembed.add_field(name='\u200B', value='\u200B', inline=False)
                 await message.channel.send(embed=assembed)
             else: 
@@ -141,14 +147,6 @@ tree = app_commands.CommandTree(client)
 @tree.command(name = "date", description = "displays the current date")
 async def first_tree(interaction):
     await interaction.response.send_message(date_time)
-
-@tree.command(name = "assignment", description = "yoink it from canvas")
-@app_commands.describe(period = "Please press the subject that you would like to show")
-async def changecourseid(interaction: discord.Interaction):
-    await interaction.response.defer(ephemeral=False)
-    await asyncio.sleep(5)
-    
-    await interaction.followup.send(embed=chatgptembed)
 
 @tree.command(name = "chatgpt", description = "get an answer directly from ChatGPT")
 @app_commands.describe(question = "What question would you like to get answered by ChatGPT?")
