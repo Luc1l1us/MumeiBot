@@ -5,6 +5,7 @@ from datetime import datetime, tzinfo
 from discord import app_commands
 from dotenv import load_dotenv
 import random
+import requests
 load_dotenv()
 
 TOKEN = os.getenv('TOKEN')
@@ -103,6 +104,17 @@ tree = app_commands.CommandTree(client)
 @tree.command(name = "date", description = "displays the date currently")
 async def first_tree(interaction):
     await interaction.response.send_message(date_time)
+
+@tree.command(name = "assignments", description = "show assignments from Canvas")
+async def canvas(interaction):
+    url = "https://www.w3schools.com/python/demopage.js"
+    response = requests.get(url)
+    rjson = response.json()
+    if response.status_code == 200:
+        await interaction.response.send_message(rjson)
+    else:
+        await interaction.response.send_message("Request failed with status code: ", response.status_code)
+    
 
 @tree.command(name = "chatgpt", description = "get an answer directly from ChatGPT")
 @app_commands.describe(question = "What question would you like to get answered by ChatGPT?")
