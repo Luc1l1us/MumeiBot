@@ -6,9 +6,12 @@ from discord import app_commands
 from dotenv import load_dotenv
 import random
 import requests
+import json
+from bs4 import BeautifulSoup
 load_dotenv()
 
 TOKEN = os.getenv('TOKEN')
+CANVAS_TOKEN = os.getenv('CANVAS_TOKEN')
 
 now = datetime.now()
 year = now.strftime("%Y")
@@ -73,6 +76,35 @@ class MyClient(discord.Client):
             )
             await message.channel.send(embed=help2)
 
+        if message.content.startswith('*assign' or 'assign'):
+            url = 'https://usls.instructure.com/api/v1/courses/{course_id}/assignments/'
+            course_id = '23347'
+            headers = {
+            'Authorization': f'Bearer {CANVAS_TOKEN}'
+            }
+            response = requests.get(url.format(course_id=course_id), headers=headers)
+            if response:
+                assignments = response.json()
+                courseurl = 'https://usls.instructure.com/api/v1/courses/'
+                courseresponse = requests.get(courseurl, headers=headers)
+                course_data = courseresponse.json()
+                assembed = discord.Embed(title="course_name", description='Assignments')
+                assembed.color = 0x826d0e
+                assembed.timestamp
+
+                for assignment in assignments:
+                    assignment_id = assignment['id']
+                    assignment_name = assignment['name']
+                    assignment_description = assignment['description']
+                    
+                    """splitdesc = assignment_description.split()
+                    first50 = ' '.join(splitdesc[:50])"""
+                    assembed.add_field(name=assignment_name, value=first50, inline=False)
+                await message.channel.send(embed=assembed)
+            else: 
+                await message.channel.send(f"Error: {response.status_code} - {response.text}")
+                
+
         if message.content.startswith('*hello' or 'hello'):
             await message.channel.send('Hello!')
 
@@ -105,16 +137,33 @@ tree = app_commands.CommandTree(client)
 async def first_tree(interaction):
     await interaction.response.send_message(date_time)
 
-@tree.command(name = "assignments", description = "show assignments from Canvas")
+@tree.command(name = "checkassignments", description = "show assignments from Canvas")
 async def canvas(interaction):
-    url = "https://www.w3schools.com/python/demopage.js"
-    response = requests.get(url)
-    rjson = response.json()
-    if response.status_code == 200:
-        await interaction.response.send_message(rjson)
-    else:
-        await interaction.response.send_message("Request failed with status code: ", response.status_code)
-    
+    url = 'https://usls.instructure.com/api/v1/courses/{course_id}/assignments/'
+    course_id = '23347'
+    headers = {
+    'Authorization': f'Bearer {CANVAS_TOKEN}'
+    }
+    response = requests.get(url.format(course_id=course_id), headers=headers)
+    if response:
+        assignments = response.json()
+        courseurl = 'https://usls.instructure.com/api/v1/courses/'
+        courseresponse = requests.get(courseurl, headers=headers)
+        course_data = courseresponse.json()
+        assembed = discord.Embed(title="course_name", description='Assignments')
+        assembed.color = 0x826d0e
+        assembed.timestamp
+
+        for assignment in assignments:
+            assignment_id = assignment['id']
+            assignment_name = assignment['name']
+            assignment_description = assignment['description']
+            splitdesc = assignment_description.split()
+            first50 = ' '.join(splitdesc[:50])
+            assembed.add_field(name=assignment_name, value=first50, inline=False)
+        await interaction.followup.send(embed=assembed)
+    else: 
+        await interaction.followup.send(f"Error: {response.status_code} - {response.text}")
 
 @tree.command(name = "chatgpt", description = "get an answer directly from ChatGPT")
 @app_commands.describe(question = "What question would you like to get answered by ChatGPT?")
