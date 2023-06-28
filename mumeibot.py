@@ -78,7 +78,7 @@ class MyClient(discord.Client):
 
         if message.content.startswith('*assign' or 'assign'):
             url = 'https://usls.instructure.com/api/v1/courses/{course_id}/assignments/'
-            course_id = '23347'
+            course_id = '24229'
             headers = {
             'Authorization': f'Bearer {CANVAS_TOKEN}'
             }
@@ -89,20 +89,23 @@ class MyClient(discord.Client):
                 courseresponse = requests.get(courseurl, headers=headers)
                 course_data = courseresponse.json()
                 assembed = discord.Embed(title="course_name", description='Assignments', type='rich')
-                assembed.color = 0x826d0e
-                assembed.timestamp
+                assembed.timestamp = datetime.utcnow()
+                assembed.color = 0x873e23
+                assembed.set_footer(text="Data was yoinked from Canvas")
 
                 for assignment in assignments:
                     assignment_id = assignment['id']
                     assignment_name = assignment['name']
                     assignment_description = assignment['description']
                     assignment_due = assignment['due_at']
+                    assignment_url = assignment['html_url']
                     splitdesc = assignment_description.split()
-                    first50 = ' '.join(splitdesc[:50])
-                    assembed.add_field(name=assignment_name, value=f"```{first50}```", inline=False)
+                    first25 = ' '.join(splitdesc[:25])
+                    assembed.add_field(name=f"{assignment_name}", value=f"```{first25}```", inline=False)
                     assembed.add_field(name="Due Date", value=f"```{assignment_due}```", inline=False)
+                    assembed.add_field(name=f"URL", value=f"[Assignment]({assignment_url})", inline=False)
                     assembed.add_field(name='\u200B', value='\u200B', inline=False)
-                    await message.channel.send(embed=assembed)
+                await message.channel.send(embed=assembed)
             else: 
                 await message.channel.send(f"Error: {response.status_code} - {response.text}")
                 
@@ -135,37 +138,17 @@ intents.message_content = True
 client = MyClient(intents=intents)
 tree = app_commands.CommandTree(client)
 
-@tree.command(name = "date", description = "displays the date currently")
+@tree.command(name = "date", description = "displays the current date")
 async def first_tree(interaction):
     await interaction.response.send_message(date_time)
 
-@tree.command(name = "checkassignments", description = "show assignments from Canvas")
-async def canvas(interaction):
-    url = 'https://usls.instructure.com/api/v1/courses/{course_id}/assignments/'
-    course_id = '23347'
-    headers = {
-    'Authorization': f'Bearer {CANVAS_TOKEN}'
-    }
-    response = requests.get(url.format(course_id=course_id), headers=headers)
-    if response:
-        assignments = response.json()
-        courseurl = 'https://usls.instructure.com/api/v1/courses/'
-        courseresponse = requests.get(courseurl, headers=headers)
-        course_data = courseresponse.json()
-        assembed = discord.Embed(title="course_name", description='Assignments')
-        assembed.color = 0x826d0e
-        assembed.timestamp
-
-        for assignment in assignments:
-            assignment_id = assignment['id']
-            assignment_name = assignment['name']
-            assignment_description = assignment['description']
-            splitdesc = assignment_description.split()
-            first50 = ' '.join(splitdesc[:50])
-            assembed.add_field(name=assignment_name, value=first50, inline=False)
-        await interaction.followup.send(embed=assembed)
-    else: 
-        await interaction.followup.send(f"Error: {response.status_code} - {response.text}")
+@tree.command(name = "assignment", description = "yoink it from canvas")
+@app_commands.describe(period = "Please press the subject that you would like to show")
+async def changecourseid(interaction: discord.Interaction):
+    await interaction.response.defer(ephemeral=False)
+    await asyncio.sleep(5)
+    
+    await interaction.followup.send(embed=chatgptembed)
 
 @tree.command(name = "chatgpt", description = "get an answer directly from ChatGPT")
 @app_commands.describe(question = "What question would you like to get answered by ChatGPT?")
