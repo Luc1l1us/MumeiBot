@@ -21,7 +21,7 @@ time = now.strftime("%I:%M:%S")
 date_time = now.strftime("%b/%d/%Y")
 
 async def assignment(self, message):
-    
+
     print(message.content)
     if message.author == self.user:
         return
@@ -192,9 +192,7 @@ async def first_tree(interaction):
 
 @tree.command(name = "assignments", description = "displays current assignments assigned to you")
 async def first_tree(interaction):
-    assignment()
-    embed=assmebed
-    await interaction.response.send_message(embed)
+    await interaction.response.send_message(assignment())
 
 @tree.command(name = "chatgpt", description = "get an answer directly from ChatGPT")
 @app_commands.describe(question = "What question would you like to get answered by ChatGPT?")
