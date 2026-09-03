@@ -1,6 +1,6 @@
 from time import ctime
 import discord, os, time, asyncio
-from yeetus import chatgpt_response
+from chatGPT import chatgpt_response
 from datetime import datetime, tzinfo
 from discord import app_commands
 from dotenv import load_dotenv
