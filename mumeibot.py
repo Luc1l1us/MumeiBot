@@ -69,7 +69,7 @@ async def assignment(message):
 
 class MyClient(discord.Client):
     async def on_ready(self):
-        await client.change_presence(activity=discord.Game(name="Martin and Danrev are gay!"))
+        await client.change_presence(activity=discord.Game(name="Ready for your input!"))
         await tree.sync()
         print(f'Logged on as {self.user}!')
 
@@ -80,32 +80,6 @@ class MyClient(discord.Client):
         print(message.content)
         if message.author == self.user:
             return
-        
-        """
-        if message.content.startswith('/ai' or '/bot' or '/chatgpt'):
-            command, user_message = None, None
-
-            for text in ['/ai', '/bot', '/chatgpt']:
-                if message.content.startswith(text):
-                    command = message.content.split(' ')[0]
-                    user_message = message.content.replace(text, '')
-                    print(command, user_message)
-        
-            if command == '/ai' or '/bot' or '/chatgpt':
-                bot_response = chatgpt_response(prompt=user_message)
-                chatgptembed = discord.Embed(type='rich')
-                chatgptembed.timestamp
-                chatgptembed.color = 0x873e23
-                chatgptembed.add_field(
-                    name="Question: ", value=f"```{user_message}```", inline=False
-                )
-                chatgptembed.add_field(
-                    name="Answer: ", value=f"```{bot_response}```", inline=True
-                )
-                chatgptembed.set_footer()
-                chatgptembed.set_author(url="https://chat.openai.com/auth/login", icon_url="https://pbs.twimg.com/profile_images/1598216720572829697/cu3LTrRl_400x400.jpg", name="ChatGPT")
-                await message.channel.send(embed=chatgptembed)
-        """
 
         if message.content.startswith('*help'):
             help2 = discord.Embed(title='Help', description='Commands')
@@ -129,9 +103,6 @@ class MyClient(discord.Client):
         if message.content.startswith('*hello' or 'hello'):
             await message.channel.send('Hello!')
 
-        if message.content.startswith('motherfucker' or 'mfker'):
-            await message.channel.send('https://www.youtube.com/watch?v=3Njvr6-OVao&ab_channel=ZeroDuping')
-
         if message.content.startswith('who' or 'who?'):
             await message.channel.send('...who?')
 
@@ -143,10 +114,6 @@ class MyClient(discord.Client):
     
         if message.content.startswith('*whoami' or 'whoami'):
             await message.channel.send('You are {}'.format(message.author.name))
-
-        if message.content.startswith('*rhentai' or 'rhentai'):
-            rand = random.randrange(1,103129)
-            await message.channel.send("https://nhentai.net/g/" + str(rand))
 
 intents = discord.Intents.default()
 intents.message_content = True
